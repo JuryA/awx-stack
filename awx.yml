@@ -38,6 +38,14 @@ services:
     env_file:
       - env
 
+  # memcached
+  memcached:
+    image: chmod666/memcached:alpine
+    networks:
+      - swarm_overlay
+    env_file:
+      - env
+
   # awx_web service
   awx_web:
     image: chmod666/awx_web:1.0.0.280
