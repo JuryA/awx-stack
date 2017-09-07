@@ -1,0 +1,62 @@
+version: '3.3'
+
+# networks
+networks:
+  # overlay where Traefik run where to put services that are exposed to the internet
+  swarm_overlay:
+    external:
+      name: traefik-net
+
+# volume
+volumes:
+  postgres:
+    driver: nfs
+    driver_opts:
+      share: master:/data/nfs
+      create: 'true'
+
+services:
+  # postgres service
+  postgres:
+    image: chmod666/postgres:9.6
+    volumes:
+      # if not using named volume
+      #- /data/awx/postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - swarm_overlay
+    env_file:
+      - env
+
+  # rabbitmq service
+  rabbitmq:
+    image: chmod666/rabbitmq:3
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - swarm_overlay
+    env_file:
+      - env
+
+  # awx_web service
+  awx_web:
+    image: chmod666/awx_web:1.0.0.280
+    user: root
+    deploy:
+      labels:
+        - traefik.port=8052 
+        - traefik.frontend.rule=Host:awx.${DOMAIN}
+        - traefik.docker.network=traefik-net
+    env_file:
+      - env
+    networks:
+      - swarm_overlay
+
+  # awx_task service
+  awx_task:
+    image: chmod666/awx_task:1.0.0.280
+    user: root
+    env_file:
+      - env
+    networks:
+      - swarm_overlay
