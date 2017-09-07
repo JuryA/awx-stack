@@ -1,4 +1,5 @@
 Docker Stack for Ansible AWX
+============================
 
 Deploy the stack with following command
 
@@ -15,4 +16,4 @@ t4nszesw6l72        awx_awx_web.1       chmod666/awx_web:1.0.0.280    swarm1    
 55bzqy29bde3        awx_postgres.1      chmod666/postgres:9.6         swarm1              Running             Running 36 minutes ago                       
 ```
 
-This compose file works with volume driver "docke-volume-netshare" by ContainX
+This compose file works with volume driver "docker-volume-netshare" by ContainX for the nfs part
